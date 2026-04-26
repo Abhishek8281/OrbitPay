@@ -226,3 +226,38 @@ export const fetchPaymentEvents = async (limit = 10) => {
     return []
   }
 }
+export const mintToken = async (to: string, amount: number) => {
+  if (!TOKEN_CONTRACT) throw new Error("Token contract missing")
+
+  const { Server, TransactionBuilder, Networks, Contract, nativeToScVal } =
+    await import("@stellar/stellar-sdk")
+
+  const server = new Server("https://soroban-testnet.stellar.org")
+  const contract = new Contract(TOKEN_CONTRACT)
+
+  const account = await server.getAccount(to)
+
+  const tx = new TransactionBuilder(account, {
+    fee: "100",
+    networkPassphrase: Networks.TESTNET,
+  })
+    .addOperation(
+      contract.call(
+        "mint",
+        nativeToScVal(to, { type: "address" }),
+        nativeToScVal(amount, { type: "i128" })
+      )
+    )
+    .setTimeout(30)
+    .build()
+
+  const signed = await window.freighterApi.signTransaction(tx.toXDR(), {
+    network: "TESTNET",
+  })
+
+  const result = await server.sendTransaction(
+    TransactionBuilder.fromXDR(signed, Networks.TESTNET)
+  )
+
+  return result
+}
