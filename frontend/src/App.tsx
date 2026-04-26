@@ -58,6 +58,12 @@ const { mint, loading: mintLoading } = useMint()
 >
   {mintLoading ? "Minting..." : "Mint 1000 Tokens"}
 </button>
+              <button
+  onClick={handleMint}
+  className="bg-green-500 px-4 py-2 rounded"
+>
+  Mint 1000 Tokens
+</button>
 
               <SendTokenForm
                 onSend={handleSend}
