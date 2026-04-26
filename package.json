@@ -9,7 +9,7 @@
   "scripts": {
     "dev": "pnpm --filter frontend dev",
     "build": "pnpm --filter frontend build",
-    "build:contracts": "cargo build --manifest-path ./contracts/hello_world/Cargo.toml --target wasm32-unknown-unknown --release"
+    "contracts": "cargo build --workspace --target wasm32-unknown-unknown --release"
   },
   "devDependencies": {
     "typescript": "^5.3.0"
