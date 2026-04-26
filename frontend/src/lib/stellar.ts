@@ -1,12 +1,17 @@
-import * as StellarSdk from 'stellar-sdk'
+import {
+  Horizon,
+  TransactionBuilder,
+  Networks,
+  StrKey,
+  xdr,
+} from "stellar-sdk"
 
-const Server = StellarSdk.Horizon.Server
-const TransactionBuilder = StellarSdk.TransactionBuilder
-const Networks = StellarSdk.Networks
-const StrKey = StellarSdk.StrKey
-const xdr = StellarSdk.xdr
+// Correct Server reference
+const Server = Horizon.Server
 
+// Create server
 const server = new Server("https://soroban-testnet.stellar.org")
+
 let freighterPublicKey = ''
 let freighterSignTx: ((txXdr: string, opts?: { network?: string }) => Promise<string>) | null = null
 
