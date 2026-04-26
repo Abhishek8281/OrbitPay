@@ -111,10 +111,45 @@ const invokeContract = async (
   }
 }
 
+import { Server, Contract, Networks, TransactionBuilder, nativeToScVal } from "@stellar/stellar-sdk"
+
 export const getTokenBalance = async (address: string): Promise<number> => {
-  if (!TOKEN_CONTRACT || !address) {
+  if (!TOKEN_CONTRACT || !address) return 0
+
+  try {
+    const server = new Server("https://soroban-testnet.stellar.org")
+    const contract = new Contract(TOKEN_CONTRACT)
+
+    const account = await server.getAccount(address)
+
+    const tx = new TransactionBuilder(account, {
+      fee: "100",
+      networkPassphrase: Networks.TESTNET,
+    })
+      .addOperation(
+        contract.call(
+          "balance_of",
+          nativeToScVal(address, { type: "address" })
+        )
+      )
+      .setTimeout(30)
+      .build()
+
+    const sim = await server.simulateTransaction(tx)
+
+    const result = sim?.result?.retval
+
+    if (!result) return 0
+
+    // extract value safely
+    const balance = Number(result._value || 0)
+
+    return balance
+  } catch (error) {
+    console.error("Balance fetch failed:", error)
     return 0
   }
+}
 
   try {
     const account = await server.loadAccount(address).catch(() => null)
