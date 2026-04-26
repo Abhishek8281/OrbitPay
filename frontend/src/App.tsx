@@ -9,7 +9,7 @@ function App() {
   const { balance, loading: balanceLoading, error: balanceError, refetch: refetchBalance } = useTokenBalance(connected ? publicKey : null)
   const { send, loading: sendLoading, error: sendError, success, clear: clearSend } = useSendToken()
   const { events, loading: eventsLoading, error: eventsError, refetch: refetchEvents } = useEvents()
-
+const { mint, loading: mintLoading } = useMint()
   const handleSend = async (to: string, amount: number) => {
     await send(to, amount)
     refetchBalance()
@@ -42,6 +42,12 @@ function App() {
                 error={balanceError}
                 onRefresh={refetchBalance}
               />
+              <button
+  onClick={() => mint(publicKey, 1000)}
+  className="bg-green-500 px-4 py-2 rounded"
+>
+  {mintLoading ? "Minting..." : "Mint 1000 Tokens"}
+</button>
 
               <SendTokenForm
                 onSend={handleSend}
