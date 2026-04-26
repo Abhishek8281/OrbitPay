@@ -2,6 +2,7 @@ import { WalletConnect } from './components/WalletConnect'
 import { BalanceDisplay } from './components/BalanceDisplay'
 import { SendTokenForm } from './components/SendTokenForm'
 import { EventList } from './components/EventList'
+import { mintToken } from './lib/stellar'
 import { useWallet, useTokenBalance, useSendToken, useEvents } from './hooks/useStellar'
 
 function App() {
