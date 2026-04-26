@@ -1,0 +1,20 @@
+{
+  "name": "stellar-dapp",
+  "version": "0.1.0",
+  "private": true,
+  "description": "A full-stack Soroban dApp monorepo",
+  "workspaces": [
+    "frontend"
+  ],
+  "scripts": {
+    "dev": "pnpm --filter frontend dev",
+    "build": "pnpm --filter frontend build",
+    "build:contracts": "cargo build --manifest-path ./contracts/hello_world/Cargo.toml --target wasm32-unknown-unknown --release"
+  },
+  "devDependencies": {
+    "typescript": "^5.3.0"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  }
+}
