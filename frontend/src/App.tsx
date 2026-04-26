@@ -17,6 +17,15 @@ const { mint, loading: mintLoading } = useMint()
     refetchEvents()
     clearSend()
   }
+  const handleMint = async () => {
+  try {
+    await mintToken(publicKey, 1000)
+    alert("Mint successful")
+  } catch (e) {
+    console.error(e)
+    alert("Mint failed")
+  }
+}
 
   return (
     <div className="min-h-screen bg-gray-900 text-white">
