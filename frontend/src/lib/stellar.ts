@@ -1,13 +1,12 @@
-import StellarSdk from 'stellar-sdk'
+import * as StellarSdk from 'stellar-sdk'
 
-const { Server, TransactionBuilder, Networks, StrKey, xdr } = StellarSdk
-const RPC_URL = import.meta.env.VITE_STELLAR_RPC_URL || 'https://soroban-testnet.stellar.org:443'
-const NETWORK_PASSPHRASE = 'Test SDF Network ; September 2015'
-const TOKEN_CONTRACT = import.meta.env.VITE_TOKEN_CONTRACT
-const HELPER_CONTRACT = import.meta.env.VITE_HELPER_CONTRACT
+const Server = StellarSdk.Horizon.Server
+const TransactionBuilder = StellarSdk.TransactionBuilder
+const Networks = StellarSdk.Networks
+const StrKey = StellarSdk.StrKey
+const xdr = StellarSdk.xdr
 
-const server = new Server('https://horizon-testnet.stellar.org')
-
+const server = new Server("https://soroban-testnet.stellar.org")
 let freighterPublicKey = ''
 let freighterSignTx: ((txXdr: string, opts?: { network?: string }) => Promise<string>) | null = null
 
