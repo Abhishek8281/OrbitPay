@@ -9,105 +9,68 @@ import {
 
 const server = new rpc.Server("https://soroban-testnet.stellar.org")
 
-// Hardcoded to avoid Vercel env issues for now
 const TOKEN_CONTRACT =
   "CD4GDMJ5DUKZPVH6WQUP7IBL5UGZHKJZVGD4BZM7VEA7W6HWN6ZDJZQ"
 
-const NETWORK_PASSPHRASE = Networks.TESTNET
+const NETWORK = Networks.TESTNET
 
-// ---------- Wallet ----------
-
-export const connectWallet = async (): Promise<string> => {
+export const connectWallet = async () => {
   const { getPublicKey } = await import("@stellar/freighter-api")
   return await getPublicKey()
 }
 
-// ---------- Helpers ----------
-
-const buildAndSimulate = async (account: any, op: any) => {
-  const tx = new TransactionBuilder(account, {
-    fee: "100",
-    networkPassphrase: NETWORK_PASSPHRASE,
-  })
-    .addOperation(op)
-    .setTimeout(30)
-    .build()
-
-  const sim = await server.simulateTransaction(tx)
-  if (!sim || sim.error) {
-    throw new Error("Simulation failed")
-  }
-
-  // assemble final tx with footprint
-  const assembled = rpc.assembleTransaction(tx, sim).build()
-  return { assembled, sim }
-}
-
-const signAndSend = async (txXdr: string) => {
-  const { signTransaction } = await import("@stellar/freighter-api")
-  const signed = await signTransaction(txXdr, {
-    network: "TESTNET",
-  })
-
-  return await server.sendTransaction(
-    TransactionBuilder.fromXDR(signed, NETWORK_PASSPHRASE)
-  )
-}
-
-// ---------- Contract ----------
-
-export const getTokenBalance = async (
-  address: string
-): Promise<number> => {
+export const getTokenBalance = async (address: string): Promise<number> => {
   try {
     const contract = new Contract(TOKEN_CONTRACT)
     const account = await server.getAccount(address)
 
-    const op = contract.call(
-      "balance_of",
-      nativeToScVal(new Address(address), { type: "address" })
-    )
+    const tx = new TransactionBuilder(account, {
+      fee: "100",
+      networkPassphrase: NETWORK,
+    })
+      .addOperation(
+        contract.call(
+          "balance_of",
+          nativeToScVal(new Address(address), { type: "address" })
+        )
+      )
+      .setTimeout(30)
+      .build()
 
-    const { sim } = await buildAndSimulate(account, op)
+    const sim = await server.simulateTransaction(tx)
 
-    // read simulated return value
-    const val: any = sim.result?.retval
-    return Number(val?._value ?? 0)
+    return Number(sim?.result?.retval?._value ?? 0)
   } catch (e) {
-    console.error("balance error:", e)
+    console.error(e)
     return 0
   }
 }
 
 export const mintToken = async (address: string, amount: number) => {
+  const { signTransaction } = await import("@stellar/freighter-api")
+
   const contract = new Contract(TOKEN_CONTRACT)
   const account = await server.getAccount(address)
 
-  const op = contract.call(
-    "mint",
-    nativeToScVal(new Address(address), { type: "address" }),
-    nativeToScVal(amount, { type: "i128" })
+  const tx = new TransactionBuilder(account, {
+    fee: "100",
+    networkPassphrase: NETWORK,
+  })
+    .addOperation(
+      contract.call(
+        "mint",
+        nativeToScVal(new Address(address), { type: "address" }),
+        nativeToScVal(amount, { type: "i128" })
+      )
+    )
+    .setTimeout(30)
+    .build()
+
+  const signed = await signTransaction(tx.toXDR(), {
+    network: "TESTNET",
+  })
+
+  return await server.sendTransaction(
+    TransactionBuilder.fromXDR(signed, NETWORK)
   )
-
-  const { assembled } = await buildAndSimulate(account, op)
-  return await signAndSend(assembled.toXDR())
-}
-
-export const sendToken = async (
-  from: string,
-  to: string,
-  amount: number
-) => {
-  const contract = new Contract(TOKEN_CONTRACT)
-  const account = await server.getAccount(from)
-
-  const op = contract.call(
-    "transfer",
-    nativeToScVal(new Address(from), { type: "address" }),
-    nativeToScVal(new Address(to), { type: "address" }),
-    nativeToScVal(amount, { type: "i128" })
-  )
-
-  const { assembled } = await buildAndSimulate(account, op)
-  return await signAndSend(assembled.toXDR())
 }
