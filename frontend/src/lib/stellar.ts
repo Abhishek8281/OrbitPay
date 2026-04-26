@@ -1,4 +1,6 @@
-import { Server, TransactionBuilder, Networks, StrKey, xdr } from 'stellar-sdk'
+import StellarSdk from 'stellar-sdk'
+
+const { Server, TransactionBuilder, Networks, StrKey, xdr } = StellarSdk
 const RPC_URL = import.meta.env.VITE_STELLAR_RPC_URL || 'https://soroban-testnet.stellar.org:443'
 const NETWORK_PASSPHRASE = 'Test SDF Network ; September 2015'
 const TOKEN_CONTRACT = import.meta.env.VITE_TOKEN_CONTRACT
