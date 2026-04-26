@@ -11,6 +11,11 @@ const Server = Horizon.Server
 
 // Create server
 const server = new Server("https://soroban-testnet.stellar.org")
+const TOKEN_CONTRACT = import.meta.env.VITE_TOKEN_CONTRACT
+const HELPER_CONTRACT = import.meta.env.VITE_HELPER_CONTRACT
+if (!TOKEN_CONTRACT) {
+  throw new Error("VITE_TOKEN_CONTRACT is not set")
+}
 
 let freighterPublicKey = ''
 let freighterSignTx: ((txXdr: string, opts?: { network?: string }) => Promise<string>) | null = null
