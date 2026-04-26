@@ -31,22 +31,6 @@ export const isValidAddress = (address: string): boolean => {
     return false
   }
 }
-import { mintToken } from "../lib/stellar"
-
-export function useMint() {
-  const [loading, setLoading] = useState(false)
-
-  const mint = async (to: string, amount: number) => {
-    setLoading(true)
-    try {
-      await mintToken(to, amount)
-    } finally {
-      setLoading(false)
-    }
-  }
-
-  return { mint, loading }
-}
 
 export const connectWallet = async () => {
   try {
