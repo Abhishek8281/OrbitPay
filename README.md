@@ -1,5 +1,6 @@
-# Stellar Soroban dApp
+# 🚀 OrbitPay
 
+A production-ready Stellar Soroban dApp for seamless token transfers with real-time event tracking and wallet integration.
 [![CI](https://github.com/yourusername/stellar-dapp/actions/workflows/ci.yml/badge.svg)](https://github.com/yourusername/stellar-dapp/actions/workflows/ci.yml)
 
 A production-ready full-stack decentralized application built on the Stellar blockchain using Soroban smart contracts.
