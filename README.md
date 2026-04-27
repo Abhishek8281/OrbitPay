@@ -105,7 +105,7 @@ cd frontend && npm run build
 | Field | Value |
 |-------|-------|
 | Network | Testnet |
-| Contract ID | `CD4GDMJ5DUKZPVH6WQUP7IBL5UGZHKJZVGD4BZM7VEA7W6HWN6ZDJZQ` |
+| Contract ID | `CCXJ5UCFQLRFKIXQXZQH5ZHQZWUYF5ZCBL45RQOEALNKVIWSMUJCLEQJ` |
 | Functions | `init`, `mint`, `transfer`, `balance_of` |
 
 ### PaymentHelper Contract
