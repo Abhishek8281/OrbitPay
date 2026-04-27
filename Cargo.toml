@@ -11,6 +11,7 @@ soroban-token-sdk = "25.3.1"
 stellar-xdr = { version = "25.0.0", features = ["curr"] }
 
 [profile.release]
+overflow-checks = true
 opt-level = "z"
 lto = true
 codegen-units = 1

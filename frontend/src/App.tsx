@@ -24,8 +24,8 @@ function App() {
     await mintToken(publicKey, 1000)
     refetch() // refresh balance
   } catch (e) {
-    console.error("Mint failed", e)
-  }
+console.error("Mint failed:", JSON.stringify(e, null, 2))  
+}
 }
 
 
