@@ -10,7 +10,7 @@ import {
 const server = new rpc.Server("https://soroban-testnet.stellar.org")
 
 const TOKEN_CONTRACT =
-  "CD62ZF5W4YJXY3JD5VMCQ4ITMUFCX3ULRAT37ALEBG7UT3TBBHF46H3Y"
+  "CD4GDMJ5DUKZPVH6WQUP7IBL5UGZHKJZVGD4BZM7VEA7W6HWN6ZDJZQ"
 
 let freighterPublicKey = ""
 
