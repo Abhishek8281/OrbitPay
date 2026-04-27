@@ -1,8 +1,8 @@
 import {
   rpc,
-  Contract,
-  Networks,
   TransactionBuilder,
+  Networks,
+  Contract,
   nativeToScVal,
   Address,
 } from "@stellar/stellar-sdk"
@@ -12,21 +12,65 @@ const server = new rpc.Server("https://soroban-testnet.stellar.org")
 const TOKEN_CONTRACT =
   "CD4GDMJ5DUKZPVH6WQUP7IBL5UGZHKJZVGD4BZM7VEA7W6HWN6ZDJZQ"
 
-const NETWORK = Networks.TESTNET
+let freighterPublicKey = ""
+
+export const isConnected = () => !!freighterPublicKey
+export const getPublicKey = () => freighterPublicKey
+
+// ✅ simple + safe
+export const isValidAddress = (addr: string) =>
+  addr?.startsWith("G") && addr.length === 56
+
+// ---------------- WALLET ----------------
 
 export const connectWallet = async () => {
-  const { getPublicKey } = await import("@stellar/freighter-api")
-  return await getPublicKey()
+  const freighter = await import("@stellar/freighter-api")
+  freighterPublicKey = await freighter.getPublicKey()
+  return freighterPublicKey
 }
 
-export const getTokenBalance = async (address: string): Promise<number> => {
+export const disconnectWallet = () => {
+  freighterPublicKey = ""
+}
+
+// ---------------- INTERNAL ----------------
+
+const signAndSend = async (tx: any) => {
+  const freighter = await import("@stellar/freighter-api")
+
+  const signed = await freighter.signTransaction(tx.toXDR(), {
+    network: "TESTNET",
+  })
+
+  return await server.sendTransaction(
+    TransactionBuilder.fromXDR(signed, Networks.TESTNET)
+  )
+}
+
+const simulate = async (tx: any) => {
+  const sim = await server.simulateTransaction(tx)
+
+  if ("error" in sim) {
+    throw new Error("Simulation failed")
+  }
+
+  return sim
+}
+
+// ---------------- BALANCE ----------------
+
+export const getTokenBalance = async (
+  address: string
+): Promise<number> => {
+  if (!isValidAddress(address)) return 0
+
   try {
-    const contract = new Contract(TOKEN_CONTRACT)
     const account = await server.getAccount(address)
+    const contract = new Contract(TOKEN_CONTRACT)
 
     const tx = new TransactionBuilder(account, {
       fee: "100",
-      networkPassphrase: NETWORK,
+      networkPassphrase: Networks.TESTNET,
     })
       .addOperation(
         contract.call(
@@ -37,44 +81,72 @@ export const getTokenBalance = async (address: string): Promise<number> => {
       .setTimeout(30)
       .build()
 
-    const sim = await server.simulateTransaction(tx)
+    const sim = await simulate(tx)
 
-    return Number(sim?.result?.retval?._value ?? 0)
+    if (!("result" in sim)) return 0
+
+const val = (sim as any).result?.retval
+    return Number((val as any)?._value || 0)
   } catch (e) {
     console.error(e)
     return 0
   }
 }
 
-export const mintToken = async (address: string, amount: number) => {
-  const { signTransaction } = await import("@stellar/freighter-api")
+// ---------------- MINT ----------------
 
+export const mintToken = async (to: string, amount: number) => {
+  if (!isValidAddress(to)) throw new Error("Invalid address")
+
+  const account = await server.getAccount(to)
   const contract = new Contract(TOKEN_CONTRACT)
-  const account = await server.getAccount(address)
 
   const tx = new TransactionBuilder(account, {
     fee: "100",
-    networkPassphrase: NETWORK,
+    networkPassphrase: Networks.TESTNET,
   })
     .addOperation(
       contract.call(
         "mint",
-        nativeToScVal(new Address(address), { type: "address" }),
+        nativeToScVal(new Address(to), { type: "address" }),
         nativeToScVal(amount, { type: "i128" })
       )
     )
     .setTimeout(30)
     .build()
 
-  const signed = await signTransaction(tx.toXDR(), {
-    network: "TESTNET",
-  })
-
-  return await server.sendTransaction(
-    TransactionBuilder.fromXDR(signed, NETWORK)
-  )
+  await simulate(tx)
+  return await signAndSend(tx)
 }
 
-export const isValidAddress = (addr: string) => {
-  return addr.startsWith("G") && addr.length > 10
+// ---------------- SEND ----------------
+
+export const sendToken = async (to: string, amount: number) => {
+  if (!freighterPublicKey)
+    throw new Error("Wallet not connected")
+
+  if (!isValidAddress(to)) throw new Error("Invalid address")
+
+  const account = await server.getAccount(freighterPublicKey)
+  const contract = new Contract(TOKEN_CONTRACT)
+
+  const tx = new TransactionBuilder(account, {
+    fee: "100",
+    networkPassphrase: Networks.TESTNET,
+  })
+    .addOperation(
+      contract.call(
+        "transfer",
+        nativeToScVal(new Address(freighterPublicKey), {
+          type: "address",
+        }),
+        nativeToScVal(new Address(to), { type: "address" }),
+        nativeToScVal(amount, { type: "i128" })
+      )
+    )
+    .setTimeout(30)
+    .build()
+
+  await simulate(tx)
+  return await signAndSend(tx)
 }

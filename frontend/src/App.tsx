@@ -9,23 +9,25 @@ function App() {
   const { connected, publicKey, connect, disconnect, loading: walletLoading, error: walletError } = useWallet()
   const { balance, loading: balanceLoading, error: balanceError, refetch: refetchBalance } = useTokenBalance(connected ? publicKey : null)
   const { send, loading: sendLoading, error: sendError, success, clear: clearSend } = useSendToken()
-  const { events, loading: eventsLoading, error: eventsError, refetchEvents } = useEvents()
-const { mint, loading: mintLoading } = useMint()
+  const { events, loading: eventsLoading, error: eventsError, refetch } = useEvents()
   const handleSend = async (to: string, amount: number) => {
     await send(to, amount)
     refetchBalance()
-    refetchEvents()
+    refetch()
     clearSend()
   }
-  const handleMint = async () => {
+  
+ const handleMint = async () => {
+  if (!publicKey) return
+
   try {
     await mintToken(publicKey, 1000)
-    alert("Mint successful")
+    refetch() // refresh balance
   } catch (e) {
-    console.error(e)
-    alert("Mint failed")
+    console.error("Mint failed", e)
   }
 }
+
 
   return (
     <div className="min-h-screen bg-gray-900 text-white">
@@ -52,13 +54,9 @@ const { mint, loading: mintLoading } = useMint()
                 error={balanceError}
                 onRefresh={refetchBalance}
               />
-              <button
-  onClick={() => mint(publicKey, 1000)}
-  className="bg-green-500 px-4 py-2 rounded"
->
-  {mintLoading ? "Minting..." : "Mint 1000 Tokens"}
-</button>
-              <button
+              
+              
+  <button
   onClick={handleMint}
   className="bg-green-500 px-4 py-2 rounded"
 >
@@ -76,7 +74,7 @@ const { mint, loading: mintLoading } = useMint()
                 events={events}
                 loading={eventsLoading}
                 error={eventsError}
-                onRefresh={refetchEvents}
+                onRefresh={refetch}
               />
             </>
           )}

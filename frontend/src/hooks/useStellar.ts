@@ -6,8 +6,7 @@ import {
   isConnected,
   getTokenBalance,
   sendToken,
-  fetchTransferEvents,
-  fetchPaymentEvents,
+  
   isValidAddress,
 } from '../lib/stellar'
 
@@ -115,35 +114,11 @@ export function useSendToken() {
   return { send, loading, error, success, clear }
 }
 
-export function useEvents(refetchInterval = 5000) {
-  const [events, setEvents] = useState<any[]>([])
-  const [loading, setLoading] = useState(false)
-  const [error, setError] = useState<string | null>(null)
-
-  const fetchEvents = useCallback(async () => {
-    setLoading(true)
-    setError(null)
-    try {
-      const [transfers, payments] = await Promise.all([
-        fetchTransferEvents(10),
-        fetchPaymentEvents(10),
-      ])
-      const all = [...transfers, ...payments].sort((a, b) => {
-        if (!a.timestamp || !b.timestamp) return 0;
-        return new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime();
-      })
-      setEvents(all.slice(0, 10))
-    } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to fetch events')
-    }
-    setLoading(false)
-  }, [])
-
-  useEffect(() => {
-    fetchEvents()
-    const interval = setInterval(fetchEvents, refetchInterval)
-    return () => clearInterval(interval)
-  }, [fetchEvents, refetchInterval])
-
-  return { events, loading, error, refetch: fetchEvents }
+export function useEvents() {
+  return {
+    events: [],
+    loading: false,
+    error: null,
+    refetch: async () => {},
+  }
 }
