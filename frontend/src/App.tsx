@@ -9,7 +9,7 @@ function App() {
   const { connected, publicKey, connect, disconnect, loading: walletLoading, error: walletError } = useWallet()
   const { balance, loading: balanceLoading, error: balanceError, refetch: refetchBalance } = useTokenBalance(connected ? publicKey : null)
   const { send, loading: sendLoading, error: sendError, success, clear: clearSend } = useSendToken()
-  const { events, loading: eventsLoading, error: eventsError, refetch: refetchEvents } = useEvents()
+  const { events, loading: eventsLoading, error: eventsError, refetchEvents } = useEvents()
 const { mint, loading: mintLoading } = useMint()
   const handleSend = async (to: string, amount: number) => {
     await send(to, amount)
