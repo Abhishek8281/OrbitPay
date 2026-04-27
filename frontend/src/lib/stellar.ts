@@ -74,3 +74,7 @@ export const mintToken = async (address: string, amount: number) => {
     TransactionBuilder.fromXDR(signed, NETWORK)
   )
 }
+
+export const isValidAddress = (addr: string) => {
+  return addr.startsWith("G") && addr.length > 10
+}
