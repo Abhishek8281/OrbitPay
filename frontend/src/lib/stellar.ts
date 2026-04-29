@@ -1,3 +1,5 @@
+console.log("NEW BUILD DEPLOYED")
+
 import {
   rpc,
   TransactionBuilder,
