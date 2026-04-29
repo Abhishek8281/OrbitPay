@@ -1,176 +1,117 @@
-# 🚀 OrbitPay
+# 🚀 OrbitPay – Stellar Token dApp
 
-A production-ready Stellar Soroban dApp for seamless token transfers with real-time event tracking and wallet integration.
-[![CI](https://github.com/yourusername/stellar-dapp/actions/workflows/ci.yml/badge.svg)](https://github.com/yourusername/stellar-dapp/actions/workflows/ci.yml)
+A production-ready decentralized application (dApp) built on Stellar Soroban that allows users to mint, transfer, and view token balances using the Freighter wallet.
 
-A production-ready full-stack decentralized application built on the Stellar blockchain using Soroban smart contracts.
+[![CI](https://github.com/Abhishek8281/OrbitPay/actions/workflows/ci.yml/badge.svg)](https://github.com/Abhishek8281/OrbitPay/actions/workflows/ci.yml)
 
-## Live Demo
+---
 
-**Testnet URL**: https://your-dapp.vercel.app
+## 🌐 Live Demo
 
-> Note: This dApp connects to Stellar Testnet. Use the Freighter wallet extension to interact.
+👉 https://orbit-pay-frontend.vercel.app/
 
-## Features
+---
 
-- **Custom Token** - Fungible token with mint and transfer capabilities
-- **Inter-Contract Calls** - PaymentHelper for seamless token transfers
-- **Real-Time Event Tracking** - Live transaction list with auto-refresh
-- **Wallet Integration** - Freighter wallet for signing transactions
+## ✨ Features
 
-## Tech Stack
+* 🔗 Connect wallet (Freighter)
+* 🪙 Mint custom tokens
+* 💸 Transfer tokens to other users
+* 📊 View token balance in real-time
 
-| Layer | Technology |
-|-------|------------|
+---
+
+## 🛠 Tech Stack
+
+| Layer           | Technology         |
+| --------------- | ------------------ |
 | Smart Contracts | Rust + Soroban SDK |
-| Blockchain | Stellar (Testnet) |
-| Frontend | React 18 + TypeScript |
-| Build | Vite |
-| Styling | Tailwind CSS |
-| Wallet | Freighter |
+| Blockchain      | Stellar (Testnet)  |
+| Frontend        | React + TypeScript |
+| Build Tool      | Vite               |
+| Styling         | Tailwind CSS       |
+| Wallet          | Freighter          |
 
-## Screenshots
+---
+
+## 📱 Screenshots
 
 ### Desktop
+
 ![Desktop UI](./docs/desktop.png)
 
 ### Mobile Responsive
+
 ![Mobile UI](./docs/mobile.png)
 
-![CI/CD Badge](./docs/ci-badge.png)
+---
 
-## Folder Structure
+## 📦 Contract Details
 
-```
-stellar-dapp/
-├── .github/workflows/     # CI/CD pipeline
-├── contracts/
-│   ├── token/           # Token contract
-│   └── payment_helper/ # Payment helper contract
-├── frontend/
-│   ├── src/
-│   │   ├── components/ # React components
-│   │   ├── hooks/     # Custom hooks
-│   │   └── lib/       # Stellar SDK integration
-│   └── package.json
-├── Cargo.toml           # Rust workspace
-├── package.json        # Root package
-└── README.md
-```
+| Field            | Value                                                      |
+| ---------------- | ---------------------------------------------------------- |
+| Network          | Testnet                                                    |
+| Contract ID      | `CCXJ5UCFQLRFKIXQXZQH5ZHQZWUYF5ZCBL45RQOEALNKVIWSMUJCLEQJ` |
+| Deployer Address | `GCKMULYRGBQSBKSOBZFWX6NHOOD4NPVVUU3EVXU6ZEM7F5NZSDKGCNUY` |
+| Functions        | `init`, `mint`, `transfer`, `balance_of`                   |
 
-## Quick Start
+---
 
-### 1. Install Dependencies
+## 🔗 Example Transaction
+
+https://stellar.expert/explorer/testnet/tx/9d320907cb0fd5a1fb8a0045b8e4712e643a30aa57f67ef20a35a85adfc68205
+
+---
+
+## ⚙️ Setup Instructions
+
+### 1. Clone Repository
 
 ```bash
-# Frontend
-cd frontend && npm install
-
-# Rust (if building contracts)
-cargo build --workspace --target wasm32v1-none --release
+git clone https://github.com/Abhishek8281/OrbitPay.git
+cd OrbitPay/frontend
 ```
 
-### 2. Configure Environment
+### 2. Install Dependencies
 
-Create `frontend/.env`:
-
-```env
-VITE_STELLAR_RPC_URL=https://soroban-testnet.stellar.org:443
-VITE_NETWORK=Test SDF Network ; September 2015
-VITE_TOKEN_CONTRACT="CCXJ5UCFQLRFKIXQXZQH5ZHQZWUYF5ZCBL45RQOEALNKVIWSMUJCLEQJ"
-VITE_HELPER_CONTRACT=<your-helper-contract-id>
+```bash
+npm install
 ```
 
 ### 3. Run Development Server
 
 ```bash
-cd frontend
 npm run dev
 ```
 
-### 4. Build for Production
+---
 
-```bash
-# Contracts
-cargo build --workspace --target wasm32v1-none --release
+## 🔄 CI/CD
 
-# Frontend
-cd frontend && npm run build
+GitHub Actions pipeline automatically builds the frontend on every push.
+
+---
+
+## 📌 Notes
+
+* Inter-contract calls: Not used in this project
+* This project demonstrates a complete token lifecycle on Stellar Soroban
+* Works on Stellar Testnet with Freighter wallet
+
+---
+
+## 📁 Folder Structure
+
+```
+OrbitPay/
+├── contracts/         # Soroban smart contracts
+├── frontend/          # React frontend
+├── .github/workflows/ # CI/CD pipeline
+└── README.md
 ```
 
-## Contract Details
+---
 
-### Token Contract
-
-| Field | Value |
-|-------|-------|
-| Network | Testnet |
-| Contract ID | `CCXJ5UCFQLRFKIXQXZQH5ZHQZWUYF5ZCBL45RQOEALNKVIWSMUJCLEQJ` |
-| Functions | `init`, `mint`, `transfer`, `balance_of` |
-
-### PaymentHelper Contract
-
-| Field | Value |
-|-------|-------|
-| Network | Testnet |
-| Contract ID | `CB4GDMJ5DUKZPVH6WQUP7IBL5UGZHKJZVGD4BZM7VEA7W6HWN6ZDJZQ` |
-| Functions | `send_token_from`, `get_token_balance` |
-
-### Sample Transaction
-
-| Field | Value |
-|-------|-------|
-| Hash | `8a2c9e3d...` |
-| Ledger | `123456` |
-| Timestamp | `2024-01-15 10:30:00 UTC` |
-
-## Deployment
-
-### Vercel (Frontend)
-
-1. Connect repository to Vercel
-2. Configure environment variables in Vercel dashboard
-3. Deploy automatically on push to main
-
-```bash
-# Build for production
-cd frontend && npm run build
-```
-
-### Manual Deployment
-
-```bash
-# 1. Deploy token contract
-soroban contract deploy \
-  --wasm target/wasm32v1-none/release/token.wasm \
-  --source <secret-key> \
-  --network testnet
-
-# 2. Deploy payment helper
-soroban contract deploy \
-  --wasm target/wasm32v1-none/release/payment_helper.wasm \
-  --source <secret-key> \
-  --network testnet
-
-# 3. Update .env with contract IDs
-```
-
-## Available Scripts
-
-| Script | Description |
-|--------|-------------|
-| `npm run dev` | Start dev server |
-| `npm run build` | Build frontend |
-| `cargo build --workspace` | Build contracts |
-
-## Contributing
-
-1. Fork the repository
-2. Create a feature branch
-3. Commit your changes
-4. Push to the branch
-5. Open a Pull Request
-
-## License
+## 🧾 License
 
 MIT
