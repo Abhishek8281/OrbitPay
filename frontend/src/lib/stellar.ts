@@ -1,3 +1,5 @@
+import { scValToNative } from "@stellar/stellar-sdk"
+
 console.log("NEW BUILD DEPLOYED")
 
 import {
@@ -89,7 +91,7 @@ export const getTokenBalance = async (address: string): Promise<number> => {
     }
 
     const val = sim.result.retval
-    return Number((val as any)?.value ?? (val as any)?._value ?? 0)
+    return Number(scValToNative(val) ?? 0)
   } catch (e) {
     console.error(e)
     return 0
