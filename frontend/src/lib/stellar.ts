@@ -89,7 +89,7 @@ export const getTokenBalance = async (address: string): Promise<number> => {
     }
 
     const val = sim.result.retval
-    return Number((val as any)?._value ?? 0)
+    return Number((val as any)?.value ?? (val as any)?._value ?? 0)
   } catch (e) {
     console.error(e)
     return 0
