@@ -77,7 +77,7 @@ Create `frontend/.env`:
 ```env
 VITE_STELLAR_RPC_URL=https://soroban-testnet.stellar.org:443
 VITE_NETWORK=Test SDF Network ; September 2015
-VITE_TOKEN_CONTRACT=<your-token-contract-id>
+VITE_TOKEN_CONTRACT="CCXJ5UCFQLRFKIXQXZQH5ZHQZWUYF5ZCBL45RQOEALNKVIWSMUJCLEQJ"
 VITE_HELPER_CONTRACT=<your-helper-contract-id>
 ```
 

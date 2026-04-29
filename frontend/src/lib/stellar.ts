@@ -55,6 +55,7 @@ const simulate = async (tx: any) => {
 
   return sim
 }
+console.log("CONTRACT:", TOKEN_CONTRACT)
 
 // ---------------- BALANCE ----------------
 
@@ -82,22 +83,19 @@ export const getTokenBalance = async (
 
     const sim = await simulate(tx)
 
-    if (!("result" in sim)) return 0
 
-const val = (sim as any).result?.retval
-    return Number((val as any)?._value || 0)
-  } catch (e) {
-    console.error(e)
-    return 0
-  }
+if (!("result" in sim) || !sim.result?.retval) {
+  return 0
 }
 
+const val = sim.result.retval
+return Number((val as any)?._value ?? 0)
 // ---------------- MINT ----------------
 
 export const mintToken = async (to: string, amount: number) => {
   if (!isValidAddress(to)) throw new Error("Invalid address")
 
-  const account = await server.getAccount(to)
+const account = await server.getAccount(to)
   const contract = new Contract(TOKEN_CONTRACT)
 
   const tx = new TransactionBuilder(account, {
