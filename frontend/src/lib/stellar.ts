@@ -121,8 +121,15 @@ export const mintToken = async (to: string, amount: number) => {
     .setTimeout(30)
     .build()
 
-  await simulate(tx)
-  return await signAndSend(tx)
+  const sim = await server.simulateTransaction(tx)
+
+  if ("error" in sim || !sim.result) {
+    throw new Error("Simulation failed")
+  }
+
+  const assembled = rpc.assembleTransaction(tx, sim)
+
+  return await signAndSend(assembled)
 }
 
 // ---------------- SEND ----------------
