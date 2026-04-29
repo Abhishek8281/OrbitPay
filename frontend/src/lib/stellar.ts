@@ -114,9 +114,8 @@ export const mintToken = async (to: string, amount: number) => {
     .addOperation(
       contract.call(
         "mint",
-      nativeToScVal(new Address(freighterPublicKey), { type: "address" }), // admin
-      nativeToScVal(new Address(to), { type: "address" }),                // recipient
-      nativeToScVal(amount, { type: "i128" })
+        nativeToScVal(new Address(to), { type: "address" }),
+        nativeToScVal(amount, { type: "i128" })
       )
     )
     .setTimeout(30)
