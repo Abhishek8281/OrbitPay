@@ -9,14 +9,16 @@ import {
 
 const server = new rpc.Server("https://soroban-testnet.stellar.org")
 
-const TOKEN_CONTRACT = "CCXJ5UCFQLRFKIXQXZQH5ZHQZWUYF5ZCBL45RQOEALNKVIWSMUJCLEQJ"
+export const TOKEN_CONTRACT =
+  "CCXJ5UCFQLRFKIXQXZQH5ZHQZWUYF5ZCBL45RQOEALNKVIWSMUJCLEQJ"
 
 let freighterPublicKey = ""
+
+// ---------------- BASIC ----------------
 
 export const isConnected = () => !!freighterPublicKey
 export const getPublicKey = () => freighterPublicKey
 
-// ✅ simple + safe
 export const isValidAddress = (addr: string) =>
   addr?.startsWith("G") && addr.length === 56
 
@@ -55,13 +57,10 @@ const simulate = async (tx: any) => {
 
   return sim
 }
-console.log("CONTRACT:", TOKEN_CONTRACT)
 
 // ---------------- BALANCE ----------------
 
-export const getTokenBalance = async (
-  address: string
-): Promise<number> => {
+export const getTokenBalance = async (address: string): Promise<number> => {
   if (!isValidAddress(address)) return 0
 
   try {
@@ -83,19 +82,25 @@ export const getTokenBalance = async (
 
     const sim = await simulate(tx)
 
+    if (!("result" in sim) || !sim.result?.retval) {
+      return 0
+    }
 
-if (!("result" in sim) || !sim.result?.retval) {
-  return 0
+    const val = sim.result.retval
+    return Number((val as any)?._value ?? 0)
+  } catch (e) {
+    console.error(e)
+    return 0
+  }
 }
 
-const val = sim.result.retval
-return Number((val as any)?._value ?? 0)
 // ---------------- MINT ----------------
 
 export const mintToken = async (to: string, amount: number) => {
   if (!isValidAddress(to)) throw new Error("Invalid address")
+  if (!freighterPublicKey) throw new Error("Wallet not connected")
 
-const account = await server.getAccount(to)
+  const account = await server.getAccount(freighterPublicKey)
   const contract = new Contract(TOKEN_CONTRACT)
 
   const tx = new TransactionBuilder(account, {
@@ -119,9 +124,7 @@ const account = await server.getAccount(to)
 // ---------------- SEND ----------------
 
 export const sendToken = async (to: string, amount: number) => {
-  if (!freighterPublicKey)
-    throw new Error("Wallet not connected")
-
+  if (!freighterPublicKey) throw new Error("Wallet not connected")
   if (!isValidAddress(to)) throw new Error("Invalid address")
 
   const account = await server.getAccount(freighterPublicKey)
